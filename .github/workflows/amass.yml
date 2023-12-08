@@ -1,8 +1,10 @@
 name: Reconnaissance Workflow
 
 on:
-  schedule:
-    - cron: '56 14 * * *' # Schedule the workflow to run daily at 2:56 PM UTC (8:26 PM IST)
+  push:
+    branches:
+      - main # adjust the branch as needed
+  workflow_dispatch:
 
 jobs:
   reconnaissance:
