@@ -1,21 +1,35 @@
-name: Daily Amass Scan
-
-on:
-  schedule:
-    - cron: '0 0 * * *' # Schedule the workflow to run daily at midnight
+name: learn-github-actions
+on: [push]
 
 jobs:
-  amass-scan:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@master
+      
+      - name: Setup golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.14.14'
 
-      - name: Setup Amass
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y amass
+    - name: Install tools
+      run: |
+        go version
+        go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+        go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+        go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 
-      - name: Run Amass
-        run: amass enum -d example.com -o reports/amass_output.txt
+    - name: Subdomain Enumeration
+      run: |
+        subfinder -d example.com -o subdomains.txt
+        httpx -l subdomains.txt -o alive.txt
+        nuclei -l alive.txt -t ~/nuclei-templates/
+
+    - name: Upload results
+      uses: actions/upload-artifact@v2
+      with:
+        name: subdomain-results
+        path: |
+          subdomains.txt
+          alive.txt
