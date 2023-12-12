@@ -1,33 +1,22 @@
-name: Reconnaissance Workflow
-
-on:
-  schedule:
-    - cron: '0 0 * * *' # Schedule the workflow to run daily at midnight
+name: learn-github-actions
+on: [push]
 
 jobs:
-  reconnaissance:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
-
-      - name: Setup Go
+        uses: actions/checkout@master
+      
+      - name: Setup golang
         uses: actions/setup-go@v2
         with:
-          go-version: '^1.17.4'
-
-      - name: Install Subfinder, HTTPX, and Nuclei
+          go-version: '^1.14.14'
+          
+      - name: Setup go tools
         run: |
-          go get -u github.com/projectdiscovery/subfinder/v2/cmd/subfinder
-          go get -u github.com/projectdiscovery/httpx/cmd/httpx
-          go get -u github.com/projectdiscovery/nuclei/v2/cmd/nuclei
-
-      - name: Subfinder Scan
-        run: subfinder -silent -d example.com -o reports/subdomains.txt
-
-      - name: HTTPX Scan
-        run: cat reports/subdomains.txt | httpx -o reports/httpx_output.txt
-
-      - name: Nuclei Scan
-        run: nuclei -l reports/httpx_output.txt -o reports/nuclei_output.txt -stats
+          go version
+          go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest    
+          
+      - name: Run Subfinder
+        run: subfinder -silent -d xsolla.com -o subfinder.txt
