@@ -13,23 +13,12 @@ jobs:
         with:
           go-version: '^1.14.14'
 
-    - name: Install tools
+  - name: Install tools
       run: |
         go version
         go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
         go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
         go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 
-    - name: Subdomain Enumeration
-      run: |
-        subfinder -d example.com -o subdomains.txt
-        httpx -l subdomains.txt -o alive.txt
-        nuclei -l alive.txt -t ~/nuclei-templates/
-
-    - name: Upload results
-      uses: actions/upload-artifact@v2
-      with:
-        name: subdomain-results
-        path: |
-          subdomains.txt
-          alive.txt
+ - name: Run Subfinder
+        run: subfinder -silent -d xsolla.com -o subfinder.txt
