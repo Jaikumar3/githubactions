@@ -2,24 +2,18 @@ name: Nuclei - Vulnerability Scan
 
 on:
   workflow_dispatch:
-
+  
 jobs:
   nuclei-scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Nuclei
-        run: |
-          curl -sSL https://github.com/projectdiscovery/nuclei/releases/download/v2.5.1/nuclei_2.5.1_linux_amd64.tar.gz | tar -xz
-          sudo mv nuclei /usr/local/bin/
+      - name: Nuclei - Vulnerability Scan
+        uses: projectdiscovery/nuclei-action@main
+        with:
+          target: https://example.com
 
-      - name: Create output directory
-        run: mkdir -p ${{ github.workspace }}/output
-
-      - name: Run Nuclei Scan
-        run: nuclei -u http://testphp.vulnweb.com/ -o ${{ github.workspace }}/output/nuclei.log
 
       - name: Upload Scan Log as Artifact
         uses: actions/upload-artifact@v4
