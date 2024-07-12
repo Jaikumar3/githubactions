@@ -13,10 +13,3 @@ jobs:
         uses: projectdiscovery/nuclei-action@main
         with:
           target: https://example.com
-
-
-      - name: Upload Scan Log as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuclei-log
-          path: ${{ github.workspace }}/output/nuclei.log
